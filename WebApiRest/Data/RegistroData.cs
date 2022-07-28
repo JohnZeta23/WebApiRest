@@ -12,17 +12,50 @@ namespace WebApiRest.Data
     {
         public static bool Registrar(Registro oregistro)
         {
+            //Generacion de token
+            var randomnumber = new Random().Next(100000, 999999);
+            oregistro.Token = randomnumber;
+            bool Validacion = false;
+
             using (MySqlConnection connection = new MySqlConnection(Conexion.ConexionString))
             {
-                MySqlCommand cmd = new MySqlCommand("usp_registar", connection);
+                //Validacion de que el token no existe en la base de datos
+                while(Validacion == false) {
+                    try
+                    {
+                        MySqlCommand cmd1 = new MySqlCommand("usp_token", connection);
+                        cmd1.CommandType = CommandType.StoredProcedure;
+                        cmd1.Parameters.AddWithValue("token", oregistro.Token);
+                        connection.Open();
+                        cmd1.ExecuteNonQuery();
+                        using (MySqlDataReader dr = cmd1.ExecuteReader())
+
+                        {
+                            if (dr.Read())
+                            {
+                                randomnumber = new Random().Next(1000000, 99999999);
+                                oregistro.Token = randomnumber;
+                            }
+                            else
+                            {
+                                Validacion = true;
+                            }
+                        }
+                    }
+                    catch (Exception ex){ Validacion = true; }
+                    finally { connection.Close(); }
+                }
+                //Registro de datos
+                MySqlCommand cmd = new MySqlCommand("usp_registrar", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Nombre", oregistro.Nombre);
-                cmd.Parameters.AddWithValue("@Apellidos", oregistro.Apellidos);
-                cmd.Parameters.AddWithValue("@User", oregistro.User);
-                cmd.Parameters.AddWithValue("@Password", oregistro.Password);
-                cmd.Parameters.AddWithValue("@Correo", oregistro.Correo);
-                cmd.Parameters.AddWithValue("@FechadeNacimiento", oregistro.User);
-                cmd.Parameters.AddWithValue("@Sexo", oregistro.Sexo);
+                cmd.Parameters.AddWithValue("token", oregistro.Token);
+                cmd.Parameters.AddWithValue("nombre", oregistro.Nombre);
+                cmd.Parameters.AddWithValue("apellidos", oregistro.Apellidos);
+                cmd.Parameters.AddWithValue("user", oregistro.User);
+                cmd.Parameters.AddWithValue("password", oregistro.Password);
+                cmd.Parameters.AddWithValue("correo", oregistro.Correo);
+                cmd.Parameters.AddWithValue("fechadeNacimiento", oregistro.User);
+                cmd.Parameters.AddWithValue("sexo", oregistro.Sexo);
 
                 try
                 {
@@ -34,6 +67,7 @@ namespace WebApiRest.Data
                 {
                     return false;
                 }
+                finally { connection.Close(); }
 
             }
 
@@ -43,16 +77,16 @@ namespace WebApiRest.Data
         {
             using (MySqlConnection connection = new MySqlConnection(Conexion.ConexionString))
             {
-                MySqlCommand cmd = new MySqlCommand("usp_registar", connection);
+                MySqlCommand cmd = new MySqlCommand("usp_modificar", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Token", oregistro.Nombre);
-                cmd.Parameters.AddWithValue("@Nombre", oregistro.Nombre);
-                cmd.Parameters.AddWithValue("@Apellidos", oregistro.Apellidos);
-                cmd.Parameters.AddWithValue("@User", oregistro.User);
-                cmd.Parameters.AddWithValue("@Password", oregistro.Password);
-                cmd.Parameters.AddWithValue("@Correo", oregistro.Correo);
-                cmd.Parameters.AddWithValue("@FechadeNacimiento", oregistro.User);
-                cmd.Parameters.AddWithValue("@Sexo", oregistro.Sexo);
+                cmd.Parameters.AddWithValue("id", oregistro.Token);
+                cmd.Parameters.AddWithValue("nombre", oregistro.Nombre);
+                cmd.Parameters.AddWithValue("apellidos", oregistro.Apellidos);
+                cmd.Parameters.AddWithValue("user", oregistro.User);
+                cmd.Parameters.AddWithValue("password", oregistro.Password);
+                cmd.Parameters.AddWithValue("correo", oregistro.Correo);
+                cmd.Parameters.AddWithValue("fechadeNacimiento", oregistro.User);
+                cmd.Parameters.AddWithValue("sexo", oregistro.Sexo);
 
                 try
                 {
@@ -64,6 +98,7 @@ namespace WebApiRest.Data
                 {
                     return false;
                 }
+                finally { connection.Close(); }
             }
         }
 
@@ -103,19 +138,18 @@ namespace WebApiRest.Data
                 {
                     return oListaRegistro;
                 }
+                finally { connection.Close(); }
 
             }
         }
-
-
-        public static Registro Obtener(int Token)
+        public static Registro Obtener(string Usuario)
         {
             Registro oregistro = new Registro();
             using (MySqlConnection connection = new MySqlConnection(Conexion.ConexionString))
             {
                 MySqlCommand cmd = new MySqlCommand("usp_obtener", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Token", Token);
+                cmd.Parameters.AddWithValue("usuario", Usuario);
 
                 try
                 {
@@ -145,7 +179,8 @@ namespace WebApiRest.Data
                 catch (Exception ex)
                 {
                     return oregistro;
-                };
+                }
+                finally { connection.Close(); }
             }
         }
 
@@ -153,11 +188,9 @@ namespace WebApiRest.Data
         {
             using (MySqlConnection connection = new MySqlConnection(Conexion.ConexionString))
             {
-
                 MySqlCommand cmd = new MySqlCommand("usp_eliminar", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Token", id);
-
+                cmd.Parameters.AddWithValue("id", id);
                 try
                 {
                     connection.Open();
@@ -168,10 +201,8 @@ namespace WebApiRest.Data
                 {
                     return false;
                 }
+                finally { connection.Close(); }
             }
         }
-
-
-
     }
 }

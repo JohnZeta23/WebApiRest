@@ -7,6 +7,6 @@ namespace WebApiRest.Data
 {
     public class Conexion
     {
-        public static string ConexionString = "Server=MySQL:3306;Database=webscraping;Uid=root;Pwd=itla-2021;";
+        public static string ConexionString = "Server=localhost;Database=webscraping;Uid=root;Pwd=itla-2021;Convert Zero Datetime=True;";
     }
 }
