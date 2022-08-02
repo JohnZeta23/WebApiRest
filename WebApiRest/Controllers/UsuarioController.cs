@@ -20,7 +20,7 @@ namespace WebApiRest.Controllers
 
         // GET api/<controller>/"Admin"/"Password"
         [Route("{User}/{Password}")]
-        public bool Get(string User, string Password)
+        public Usuario Get(string User, string Password)
         {
             return UsuarioData.Obtener(User, Password);
         }

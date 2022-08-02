@@ -130,7 +130,7 @@ namespace WebApiRest.Data
             }
         }
 
-        public static bool Obtener(string Usuario, string password)
+        public static Usuario Obtener(string Usuario, string Password)
         {
             Usuario oUsuario = new Usuario();
             bool checkpassword = false;
@@ -139,7 +139,7 @@ namespace WebApiRest.Data
                 MySqlCommand cmd = new MySqlCommand("Usersp_obtener", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("usuario", Usuario);
-                //cmd.Parameters.AddWithValue("contrasena", Password);
+                cmd.Parameters.AddWithValue("contrasena", BCrypt.Net.BCrypt.HashPassword(Password));
                 try
                 {
                     connection.Open();
@@ -157,15 +157,17 @@ namespace WebApiRest.Data
                                 TipoUsuario = Convert.ToInt32(dr["Tipo_Usuario"])
                             };
 
-                            checkpassword = BCrypt.Net.BCrypt.Verify(password, oUsuario.Password);
+                            //checkpassword = BCrypt.Net.BCrypt.Verify(password, oUsuario.Password);
                         }
                     }
 
-                    return checkpassword;
+                    //return checkpassword;
+                    return oUsuario;
                 }
                 catch (Exception ex)
                 {
-                    return checkpassword;
+                    //return checkpassword;
+                    return oUsuario;
                 }
                 finally { connection.Close(); }
             }
