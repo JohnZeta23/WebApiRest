@@ -50,7 +50,8 @@ namespace WebApiRest.Data
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("token", oUsuario.Token);
                 cmd.Parameters.AddWithValue("user", oUsuario.User);
-                cmd.Parameters.AddWithValue("password", BCrypt.Net.BCrypt.HashPassword(oUsuario.Password));
+                ///cmd.Parameters.AddWithValue("password", BCrypt.Net.BCrypt.HashPassword(oUsuario.Password));
+                cmd.Parameters.AddWithValue("password", oUsuario.Password);
                 cmd.Parameters.AddWithValue("tipoUsuario", oUsuario.TipoUsuario);
 
                 try
@@ -133,13 +134,13 @@ namespace WebApiRest.Data
         public static Usuario Obtener(string Usuario, string Password)
         {
             Usuario oUsuario = new Usuario();
-            bool checkpassword = false;
+            //bool checkpassword = false;
             using (MySqlConnection connection = new MySqlConnection(Conexion.ConexionString))
             {
                 MySqlCommand cmd = new MySqlCommand("Usersp_obtener", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("usuario", Usuario);
-                cmd.Parameters.AddWithValue("contrasena", BCrypt.Net.BCrypt.HashPassword(Password));
+                cmd.Parameters.AddWithValue("contrasena", Password);
                 try
                 {
                     connection.Open();

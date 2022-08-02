@@ -52,7 +52,8 @@ namespace WebApiRest.Data
                 cmd.Parameters.AddWithValue("nombre", oregistro.Nombre);
                 cmd.Parameters.AddWithValue("apellidos", oregistro.Apellidos);
                 cmd.Parameters.AddWithValue("user", oregistro.User);
-                cmd.Parameters.AddWithValue("password", BCrypt.Net.BCrypt.HashPassword(oregistro.Password));
+                //cmd.Parameters.AddWithValue("password", BCrypt.Net.BCrypt.HashPassword(oregistro.Password));
+                cmd.Parameters.AddWithValue("password", oregistro.Password);
                 cmd.Parameters.AddWithValue("correo", oregistro.Correo);
                 cmd.Parameters.AddWithValue("fechadeNacimiento", oregistro.User);
                 cmd.Parameters.AddWithValue("sexo", oregistro.Sexo);
