@@ -11,5 +11,6 @@ namespace WebApiRest.Models
         public string User { get; set; }
         public string Password { get; set; }
         public int TipoUsuario { get; set; }
+        public string Correo { get; set; }
     }
 }

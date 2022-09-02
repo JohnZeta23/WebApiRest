@@ -19,10 +19,10 @@ namespace WebApiRest.Controllers
         }
 
         // GET api
-        [Route("{User}")]
-        public Registro Get(string User)
+        [Route("{id}")]
+        public Registro Get(int id)
         {
-            return RegistroData.Obtener(User);
+            return RegistroData.Obtener(id);
         }
 
         // POST api

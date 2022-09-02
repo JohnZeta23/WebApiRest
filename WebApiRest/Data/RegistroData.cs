@@ -52,12 +52,17 @@ namespace WebApiRest.Data
                 cmd.Parameters.AddWithValue("nombre", oregistro.Nombre);
                 cmd.Parameters.AddWithValue("apellidos", oregistro.Apellidos);
                 cmd.Parameters.AddWithValue("user", oregistro.User);
-                //cmd.Parameters.AddWithValue("password", BCrypt.Net.BCrypt.HashPassword(oregistro.Password));
                 cmd.Parameters.AddWithValue("password", oregistro.Password);
                 cmd.Parameters.AddWithValue("correo", oregistro.Correo);
-                cmd.Parameters.AddWithValue("fechadeNacimiento", oregistro.User);
+                cmd.Parameters.AddWithValue("fechadeNacimiento", oregistro.FechadeNacimiento);
                 cmd.Parameters.AddWithValue("sexo", oregistro.Sexo);
+                cmd.Parameters.AddWithValue("foto", oregistro.Foto);
 
+                Usuario oUsuario = new Usuario();
+                oUsuario = new Usuario() { Token = oregistro.Token, User = oregistro.User, Password = oregistro.Password,
+                TipoUsuario = 0, Correo = oregistro.Correo};
+
+                UsuarioData.Registrar(oUsuario);
                 try
                 {
                     connection.Open();
@@ -86,8 +91,9 @@ namespace WebApiRest.Data
                 cmd.Parameters.AddWithValue("user", oregistro.User);
                 cmd.Parameters.AddWithValue("password", oregistro.Password);
                 cmd.Parameters.AddWithValue("correo", oregistro.Correo);
-                cmd.Parameters.AddWithValue("fechadeNacimiento", oregistro.User);
+                cmd.Parameters.AddWithValue("fechadeNacimiento", oregistro.FechadeNacimiento);
                 cmd.Parameters.AddWithValue("sexo", oregistro.Sexo);
+                cmd.Parameters.AddWithValue("foto", oregistro.Foto);
 
                 try
                 {
@@ -128,9 +134,10 @@ namespace WebApiRest.Data
                                 User = dr["User"].ToString(),
                                 Password = dr["Password"].ToString(),
                                 Correo = dr["Correo"].ToString(),
-                                FechadeNacimiento = Convert.ToDateTime(dr["FechadeNacimiento"].ToString()),
-                                Sexo = dr["Sexo"].ToString()
-                              });
+                                FechadeNacimiento = dr["FechadeNacimiento"].ToString(),
+                                Sexo = dr["Sexo"].ToString(),
+                                Foto = dr["Foto"].ToString()
+                            });
                         }
                     }
                     return oListaRegistro;
@@ -140,17 +147,17 @@ namespace WebApiRest.Data
                     return oListaRegistro;
                 }
                 finally { connection.Close(); }
-
+                //Convert.ToDateTime(dr["FechadeNacimiento"].ToString())
             }
         }
-        public static Registro Obtener(string Usuario)
+        public static Registro Obtener(int id)
         {
             Registro oregistro = new Registro();
             using (MySqlConnection connection = new MySqlConnection(Conexion.ConexionString))
             {
                 MySqlCommand cmd = new MySqlCommand("usp_obtener", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("usuario", Usuario);
+                cmd.Parameters.AddWithValue("id", id);
 
                 try
                 {
@@ -169,8 +176,9 @@ namespace WebApiRest.Data
                                 User = dr["User"].ToString(),
                                 Password = dr["Password"].ToString(),
                                 Correo = dr["Correo"].ToString(),
-                                FechadeNacimiento = Convert.ToDateTime(dr["FechadeNacimiento"].ToString()),
-                                Sexo = dr["Sexo"].ToString()
+                                FechadeNacimiento = dr["FechadeNacimiento"].ToString(),
+                                Sexo = dr["Sexo"].ToString(),
+                                Foto = dr["Foto"].ToString()
                             };
                         }
                     }
